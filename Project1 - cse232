@@ -1,0 +1,100 @@
+#include <iostream>
+using std::cout;
+using std::cin;
+#include <string>
+using std::string;
+
+bool AtListPosition(const string &list, const string &word, size_t pos){
+    size_t real_pos;
+    size_t length = word.length();
+    real_pos=list.find(word, pos);
+    if(real_pos!=pos){
+        return false;
+    }
+    if(real_pos==0){
+        if((list[real_pos+length]==',' || real_pos+length>=list.length())){
+            return true;
+        }
+    }
+    else if((list[real_pos+length]==',' || real_pos+length>=list.length()) && list[real_pos-1]==','){
+        return true;
+    }
+
+    return false;
+}
+
+size_t FindInList(const string &list, const string &word, size_t pos=0){
+    size_t result;
+    result = list.find(word, pos);
+    if(result==string::npos){
+        return result;
+    }
+    if(AtListPosition(list, word, result)==true){
+        return result;
+    }
+    while(true){
+        result++;
+        result = list.find(word, result);
+        if(result==string::npos){
+            return result;
+        }
+        if(AtListPosition(list, word, result)==true){
+            return result;
+        }
+    }
+
+}
+
+string GetFirstInList(const string &test, string *word_one, string *word_two){
+    string first = "N/A";
+    size_t first_result = FindInList(test, *word_one);
+    size_t second_result = FindInList(test, *word_two);
+    if(first_result>second_result){
+        first = *word_two;
+    }
+    else if(second_result>first_result){
+        first = *word_one;
+    }
+    
+    return first;
+}
+
+size_t CountInList(const string &list, const string &word){
+    size_t count=0;
+    size_t test;
+    test = FindInList(list, word);
+    if(test==string::npos){
+        return 0;
+    }
+    while(test!=string::npos){
+        count++;
+        test = FindInList(list, word, test+1);   
+    }
+    return count;
+}
+
+
+
+
+int main(){
+  string keyword_one;
+  string keyword_two;
+  string first_in_list;
+  size_t count_one=0;
+  size_t count_two=0;
+
+  cin>>keyword_one;
+  cin>>keyword_two;
+
+  string test_case;
+
+  while(cin>>test_case){
+
+    first_in_list = GetFirstInList(test_case, &keyword_one, &keyword_two);
+    count_one = CountInList(test_case, keyword_one);
+    count_two = CountInList(test_case, keyword_two);
+
+    cout<<first_in_list<<" "<<count_one<<" "<<count_two<<std::endl;
+  }
+  
+}
